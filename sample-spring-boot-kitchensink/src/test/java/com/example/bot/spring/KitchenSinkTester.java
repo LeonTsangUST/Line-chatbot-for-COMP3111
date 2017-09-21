@@ -69,12 +69,10 @@ public class KitchenSinkTester {
 		try {
 			result = this.databaseEngine.search("abc");
 		} catch (Exception e) {
-			//thrown = true;
-			thrown = false;
+			thrown = true;
 		}
 		assertThat(!thrown).isEqualTo(true);
-		//assertThat(result).isEqualTo("def");
-		assertThat(result).isEqualTo(null);
+		assertThat(result).isEqualTo("def");
 	}
 	
 }
