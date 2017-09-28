@@ -16,36 +16,27 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 	String search(String text) throws Exception {
 		//Write your code here
 		String result = null;
-		BufferedReader br = null;
-		InputStreamReader isr = null;
 		try {
-			isr = new InputStreamReader(
-                    this.getClass().getResourceAsStream(FILENAME));
-			br = new BufferedReader(isr);
-			String sCurrentLine;
+			Connetion connection = getConnection();
+			PreparedStatement stmt = connection.prepareStatement("SELECT keyboard, response FROM chatbotresponse");
+			ResultSet re=stmt.executeQuery();
 			
-			while ((sCurrentLine = br.readLine()) != null) {
-				String[] parts = sCurrentLine.split(":");
-				if (text.toLowerCase().equals(parts[0].toLowerCase())) {
-					result = parts[1];
+			while(re.next()) {
+				if(text.toLowerCase().contains(re.getString(1).toLowerCase())) {
+					result = re.getString(2);
+					break;
 				}
 			}
-		} catch (IOException e) {
-			log.info("IOException while reading file: {}", e.toString());
-		} finally {
-			try {
-				if (br != null)
-					br.close();
-				if (isr != null)
-					isr.close();
-			} catch (IOException ex) {
-				log.info("IOException while closing file: {}", ex.toString());
-			}
+			
+			re.close();
+			stmt.close();
+			connection.close();
+		} catch(Exception e) {
+			log.info(e.toString());
 		}
 		if (result != null)
 			return result;
 		throw new Exception("NOT FOUND");
-		return null;
 	}
 	
 	
